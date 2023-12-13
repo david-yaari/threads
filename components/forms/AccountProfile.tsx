@@ -28,8 +28,8 @@ import path from 'path';
 interface Props {
   user: {
     id: string;
-    objectId: string;
-    username: string;
+    _id: string;
+    username: string | null;
     name: string;
     bio: string;
     image: string;

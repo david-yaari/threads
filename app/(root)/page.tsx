@@ -7,7 +7,7 @@ export default async function Home() {
   if (!user) return null; // to avoid typescript warnings
 
   const result = await fetchPosts(1, 30);
-  console.log(result);
+  //console.log(result);
 
   return (
     <>
@@ -21,7 +21,7 @@ export default async function Home() {
               <ThreadCard
                 key={post._id}
                 id={post._id}
-                currentUser={user.id}
+                currentUserId={user.id}
                 parentId={post.parentId}
                 content={post.text}
                 author={post.author}

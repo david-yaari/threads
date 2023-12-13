@@ -4,7 +4,7 @@ import { auth } from '@clerk/nextjs';
 
 interface Props {
   id: string;
-  currentUser: string;
+  currentUserId: string;
   parentId: string | null;
   content: string;
   author: {
@@ -28,7 +28,7 @@ interface Props {
 
 function ThreadCard({
   id,
-  currentUser,
+  currentUserId,
   parentId,
   content,
   author,
@@ -38,7 +38,11 @@ function ThreadCard({
   isComment,
 }: Props) {
   return (
-    <article className='flex w-full flex-col div>dark-2 p-7'>
+    <article
+      className={`flex w-full flex-col rounded-xl ${
+        isComment ? 'px-0 xs:px-7' : 'bg-dark-2 p-7'
+      }`}
+    >
       <div className='flex items-start justify-between'>
         <div className='flex w-full flex-1 flex-row gap-4'>
           <div className='flex flex-col items-center'>

@@ -1,35 +1,33 @@
 'use client';
-import { sidebarLinks } from '@/constants';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { SignOutButton, SignedIn } from '@clerk/nextjs';
 
-function LeftSidebar() {
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { SignOutButton, SignedIn, useAuth } from '@clerk/nextjs';
+
+import { sidebarLinks } from '@/constants';
+
+const LeftSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  // const [isOpen, setIsOpen] = useState(false);
-  // const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  // const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  // const [isSearchOpen, setIsSearchOpen] = useState(false);
-  // const [isSearchFocus, setIsSearchFocus] = useState(false);
-  // const [isMobileMenuFocus, setIsMobileMenuFocus] = useState(false);
-  // const [isMobileSearchFocus, setIsMobileSearchFocus] = useState(false);
-  // const [isSearchFocusMobile, setIsSearchFocusMobile] = useState(false);
+
+  const { userId } = useAuth();
+
   return (
     <section className='custom-scrollbar leftsidebar'>
       <div className='flex w-full flex-1 flex-col gap-6 px-6'>
-        {sidebarLinks.map((link, index) => {
+        {sidebarLinks.map((link) => {
           const isActive =
             (pathname.includes(link.route) && link.route.length > 1) ||
             pathname === link.route;
+
+          if (link.route === '/profile') link.route = `${link.route}/${userId}`;
+
           return (
             <Link
               href={link.route}
               key={link.label}
-              className={`leftsidebar_link ${isActive && 'bg-primary-500'}`}
+              className={`leftsidebar_link ${isActive && 'bg-primary-500 '}`}
             >
               <Image
                 src={link.imgURL}
@@ -37,14 +35,16 @@ function LeftSidebar() {
                 width={24}
                 height={24}
               />
+
               <p className='text-light-1 max-lg:hidden'>{link.label}</p>
             </Link>
           );
         })}
       </div>
+
       <div className='mt-10 px-6'>
         <SignedIn>
-          <SignOutButton signOutCallback={() => router.push('sign-in')}>
+          <SignOutButton signOutCallback={() => router.push('/sign-in')}>
             <div className='flex cursor-pointer gap-4 p-4'>
               <Image
                 src='/assets/logout.svg'
@@ -52,6 +52,7 @@ function LeftSidebar() {
                 width={24}
                 height={24}
               />
+
               <p className='text-light-2 max-lg:hidden'>Logout</p>
             </div>
           </SignOutButton>
@@ -59,6 +60,6 @@ function LeftSidebar() {
       </div>
     </section>
   );
-}
+};
 
 export default LeftSidebar;

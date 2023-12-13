@@ -1,13 +1,15 @@
 import PostThread from '@/components/forms/PostThread';
 import { fetchUser } from '@/lib/actions/user.actions';
+import { UserInfo } from '@/types';
 import { currentUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
+
 async function page() {
   const user = await currentUser();
   if (!user) return null; // to avoid typescript warnings
 
   // fetch organization list created by user
-  const userInfo = await fetchUser(user.id);
+  const userInfo: UserInfo = await fetchUser(user.id);
   //console.log(userInfo);
 
   if (!userInfo?.onboarded) redirect('/onboarding');

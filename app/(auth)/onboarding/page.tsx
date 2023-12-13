@@ -3,18 +3,19 @@ import { redirect } from 'next/navigation';
 
 import { fetchUser } from '@/lib/actions/user.actions';
 import AccountProfile from '@/components/forms/AccountProfile';
+import { UserInfo } from '@/types';
 
 async function Page() {
   const user = await currentUser();
   if (!user) return null; // to avoid typescript warnings
 
-  const userInfo = await fetchUser(user.id);
+  const userInfo: UserInfo = await fetchUser(user.id);
 
   if (userInfo?.onboarded) redirect('/');
 
-  const userData = {
+  const userData: UserInfo = {
     id: user?.id,
-    objectId: userInfo?._id,
+    _id: userInfo?._id,
     username: userInfo?.username || user?.username,
     name: userInfo?.name || user?.firstName || '',
     bio: userInfo?.bio || '',
