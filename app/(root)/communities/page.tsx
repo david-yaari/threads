@@ -44,6 +44,7 @@ async function Page() {
               <UserCard
                 key={person.id}
                 id={person.id}
+                name={person.name}
                 username={person.username}
                 imgUrl={person.imageUrl}
                 personType='User'
