@@ -1,59 +1,64 @@
-import PostThread from '@/components/forms/PostThread';
-import ProfileHeader from '@/components/shared/ProfileHeader';
-import { profileTabs } from '@/constants';
-import { fetchUser, fetchUsers } from '@/lib/actions/user.actions';
-import { UserInfo } from '@/types';
 import { currentUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
-import Image from 'next/image';
-import UserCard from '@/components/cards/UserCard';
 
-async function Page() {
+import Searchbar from '@/components/shared/Searchbar';
+import Pagination from '@/components/shared/Pagination';
+import CommunityCard from '@/components/cards/CommunityCard';
+
+import { fetchUser } from '@/lib/actions/user.actions';
+import { fetchCommunities } from '@/lib/actions/community.actions';
+
+async function Page({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) {
   const user = await currentUser();
-  //console.log(user);
-  if (!user) return null; // to avoid typescript warnings
+  if (!user) return null;
 
-  // fetch organization list created by user
-  const userInfo: UserInfo = await fetchUser(user.id);
-  //console.log(userInfo);
-
+  const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect('/onboarding');
 
-  // Fetch users
-  const result = await fetchUsers({
-    userId: user.id,
-    searchString: '',
-    pageNumber: 1,
+  const result = await fetchCommunities({
+    searchString: searchParams.q,
+    pageNumber: searchParams?.page ? +searchParams.page : 1,
     pageSize: 25,
-    sortBy: 'desc',
   });
-  //(result);
 
   return (
-    <section>
-      <h1 className='head-text mb-10'>Search</h1>
+    <>
+      <h1 className='head-text'>Communities</h1>
 
-      {/* Search Bar */}
+      <div className='mt-5'>
+        <Searchbar routeType='communities' />
+      </div>
 
-      <div className='mt-14 flex flex-col gap-9'>
-        {result.users.length === 0 ? (
-          <p className='no-result'>No users</p>
+      <section className='mt-9 flex flex-wrap gap-4'>
+        {result.communities.length === 0 ? (
+          <p className='no-result'>No Result</p>
         ) : (
           <>
-            {result.users.map((person) => (
-              <UserCard
-                key={person.id}
-                id={person.id}
-                name={person.name}
-                username={person.username}
-                imgUrl={person.imageUrl}
-                personType='User'
+            {result.communities.map((community) => (
+              <CommunityCard
+                key={community.id}
+                id={community.id}
+                name={community.name}
+                username={community.username}
+                imgUrl={community.image}
+                bio={community.bio}
+                members={community.members}
               />
             ))}
           </>
         )}
-      </div>
-    </section>
+      </section>
+
+      <Pagination
+        path='communities'
+        pageNumber={searchParams?.page ? +searchParams.page : 1}
+        isNext={result.isNext}
+      />
+    </>
   );
 }
 
