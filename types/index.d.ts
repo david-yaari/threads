@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 type UserInfo = {
   _id: string;
   id: string;
+  objectId: string;
   username: string | null;
   name: string;
   bio: string;
